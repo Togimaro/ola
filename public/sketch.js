@@ -1,11 +1,18 @@
 var socket;
 
+function preload() {
+  mySound = loadSound('assets/ola.mp3');
+}
+
 function setup() {
   createCanvas(400, 400);
   background(0);
   rectMode(CENTER);
   smooth(4);
   noStroke();
+
+  mySound.setLoop(true);
+  //mySound.play();
 
   socket = io.connect('http://localhost:5000');
   //socket = io.connect('http://159.89.250.37:5000');
@@ -14,23 +21,28 @@ function setup() {
 
 var inputs = [];
 
-var maxInput = 10;
 var inputNum = 0;
 
 function draw() {
   background(0);
   
-  drawKey(width/2, height/2, 'A', inputs[65]);
+
   for(var code = 0; code < 255; code++) {
     if (keyIsDown(code) && !inputs[code]) {
       prepare();
       console.log(keyboardMap[code]);
       inputs[code] = true;
+      //mySound.play();
     } else if (!keyIsDown(code) && inputs[code]) {
       ola();
+      
       inputs[code] = false;
     }
   }
+
+  var i = 0;
+  for(var id in inputs)
+    drawKey(50 + 60 * i++, 50, keyboardMap[id], inputs[id]);
 }
 
 function connected() {
