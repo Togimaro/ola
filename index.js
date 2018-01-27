@@ -17,9 +17,14 @@ var users = [];
 
 io.sockets.on('connection',
   function (socket) {
-    console.log("Client connection: " + socket.id);
-  
-    users[socket.id] = socket;
+
+    socket.on('setPlayer',
+      function(data) {
+        console.log("New " + data.numPlayer + " player(s) at " + socket.id);
+    
+        users[socket.id] = { soc: socket, num: data.numPlayer };
+      }
+    );
 
     socket.on('prepare',
       function(data) {
