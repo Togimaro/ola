@@ -4,36 +4,37 @@ function setup() {
   createCanvas(400, 400);
   background(0);
 
-  //socket = io.connect('http://localhost:3000');
-  socket = io.connect('http://159.89.250.37:5000');
+  socket = io.connect('http://localhost:5000');
+  //socket = io.connect('http://159.89.250.37:5000');
 
-  socket.on('mouse', receivemouse);
+  socket.on('prepare', receive);
+  socket.on('ola', receive);
 }
+
+var inputs = [];
 
 function draw() {
+  for(var code = 10; code < 200; code++) {
+    if (keyIsDown(code) && !inputs[code]) {
+      prepare();
+      inputs[code] = true;
+    } else if (!keyIsDown(code) && inputs[code]) {
+      ola();
+      inputs[code] = false;
+    }
+  }
 }
 
-function mouseDragged() {
-  fill(255);
-  noStroke();
-  ellipse(mouseX,mouseY,20,20);
-
-  sendmouse(mouseX,mouseY);
+function prepare() {
+  console.log("send prepare" );
+  socket.emit('prepare');
 }
 
-function sendmouse(xpos, ypos) {
-  console.log("sendmouse: " + xpos + " " + ypos);
-
-  var data = {
-    x: xpos,
-    y: ypos
-  };
-  socket.emit('mouse',data);
+function ola() {
+  console.log("send OLA" );
+  socket.emit('ola');
 }
 
-function receivemouse(data) {
-  console.log("Got: " + data.x + " " + data.y);
-  fill(0,0,255);
-  noStroke();
-  ellipse(data.x, data.y, 20, 20);
+function receive(data) {
+  console.log("Got: " + data);
 }

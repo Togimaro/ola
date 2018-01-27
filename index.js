@@ -13,25 +13,32 @@ app.use(express.static('public'));
 
 var io = require('socket.io')(server);
 
+var users = [];
+
 io.sockets.on('connection',
   function (socket) {
     console.log("Client connection: " + socket.id);
   
-    socket.on('mouse',
-      function(data) {
-        // Data comes in as whatever was sent, including objects
-        console.log("Received: 'mouse' " + data.x + " " + data.y);
-      
-        // Send it to all other clients
-        socket.broadcast.emit('mouse', data);
-        
-        // This is a way to send to everyone including sender
-        // io.sockets.emit('message', "this goes to everyone");
+    users[socket.id] = socket;
 
+    socket.on('prepare',
+      function(data) {
+        console.log("Received:s 'prepare' from " + socket.id);
+      
+        socket.broadcast.emit('prepare', socket.id);
+      }
+    );
+
+    socket.on('ola',
+      function(data) {
+        console.log("Received:s 'ola' from " + socket.id);
+      
+        socket.broadcast.emit('ola', socket.id);
       }
     );
     
     socket.on('disconnect', function() {
+      delete users[socket.id];
       console.log("Client has disconnected");
     });
   }
