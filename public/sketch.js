@@ -14,15 +14,6 @@ function lobbySetup(nbOfPlayers) {
   textSize(36);
   fill('#EFB55A');
   text("Everyone, get a key and hold it !", CanvasSize[0]/2, 50)
-
-
-
-  //olaSound.setLoop(true);
-  //olaSound.play();
-
-  socket = io.connect('http://localhost:5000');
-  //socket = io.connect('http://159.89.250.37:5000');
-  socket.on('connect', connected);
 }
 
 var inputs = [];
@@ -50,32 +41,19 @@ function lobbyDraw (nbOfPlayers) {
   noStroke()
 
   for (var code = 0; code < 255; code++) {
-    /*
-    if (keyIsDown(code) && !inputs[code]) {
-      prepare();
-      console.log(keyboardMap[code]);
-      inputs[code] = true;
-      //olaSound.play();
-    } else if (!keyIsDown(code) && inputs[code]) {
-      ola();
-      
-      inputs[code] = false;
-    }*/
-
     if (keyIsDown(code) && !inputs[code])
       inputs[code] = true;
     
     else if (!keyIsDown(code))
       inputs[code] = false;
-
   }
 
   var i = 0;
   var j = 0;
   var count = 0;
   
-  var titi = inputs.filter((cur, id) => {
-    if(cur) {
+  var titi = inputs.filter((key, id) => {
+    if (key) {
       drawKey((j++)* cellWidth + cellWidth / 2, 150 + i * cellHeight + cellHeight / 2, keyboardMap[id]);
     }
 
@@ -88,33 +66,17 @@ function lobbyDraw (nbOfPlayers) {
       i = 0;
     }
 
-    return cur;
+    return key;
   })
 
   if (+titi.length === +nbOfPlayers) {
-    console.log(goToScene(ROOM, nbOfPlayers));
+    var players = []
+    inputs.map((index, id) => {
+      if (index) players.push(id)
+    })
+
+    goToScene(ROOM, players);
   }
-}
-
-function connected() {
-  socket.emit('setPlayer', { numPlayer: 4 });
-
-  socket.on('prepare', receive);
-  socket.on('ola', receive);
-}
-
-function prepare() {
-  console.log("send prepare" );
-  socket.emit('prepare', { playerId: 0 });
-}
-
-function ola() {
-  console.log("send OLA" );
-  socket.emit('ola', { playerId: 0 });
-}
-
-function receive(data) {
-  console.log("Got: " + data);
 }
 
 function drawKey(x, y, char, pressed) {

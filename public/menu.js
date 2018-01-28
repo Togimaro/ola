@@ -63,7 +63,7 @@ function createPlayersInput() {
 
 function onInputChange() {
   if (+this.value())
-    console.log("You are " + this.value() + " players.");
+    console.log(`You are ${this.value()} players.`);
   else {
     this.value(0);
   }

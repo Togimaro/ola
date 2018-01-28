@@ -15,10 +15,7 @@ function draw() {
     lobbyDraw(nbOfPlayers);
 
   else if (currentScene === ROOM) {
-    fill (40, 50, 210)
-    rect(CanvasSize[0]/2, CanvasSize[1]/2, CanvasSize[0], CanvasSize[1])
-    fill(0)
-    text("hello to the " + nbOfPlayers + " players", CanvasSize[0]/2, CanvasSize[1]/2)
+    roomDraw();
   }
 }
 
@@ -41,7 +38,8 @@ function goToScene(scene, ...params) {
         break;
 
       case ROOM:
-        // roomSetup();
+        playersArray = params[0]
+        roomSetup(playersArray);
         break;
     }
   }
